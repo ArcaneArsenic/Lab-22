@@ -21,7 +21,7 @@ namespace Ksu.Cis300.TrieLibrary
             han = temp;
             solo = x;
 
-            if (solo = (string)emp) { throw new ArgumentException}
+            if (solo = (string)emp) { throw new ArgumentException(); }
         }
         public ITrie Add(string s)
         {
