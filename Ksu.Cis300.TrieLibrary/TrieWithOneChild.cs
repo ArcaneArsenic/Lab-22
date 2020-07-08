@@ -10,7 +10,7 @@ namespace Ksu.Cis300.TrieLibrary
     class TrieWithOneChild : ITrie
     {
         private string emp;
-        private ITrie han; //cuz he's solo XD
+        private ITrie han;
         private Label solo;
 
         public TrieWithOneChild(ITrie temp, Label x)
@@ -21,7 +21,7 @@ namespace Ksu.Cis300.TrieLibrary
             han = temp;
             solo = x;
 
-            if (solo = (string)emp) { throw new ArgumentException(); }
+            if (solo = (string)emp { throw new ArgumentException(); }
         }
         public ITrie Add(string s)
         {

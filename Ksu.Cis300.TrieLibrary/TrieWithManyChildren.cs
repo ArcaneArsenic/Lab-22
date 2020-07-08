@@ -88,12 +88,14 @@ namespace Ksu.Cis300.TrieLibrary
                 int loc = s[0] - 'a';
                 if (_children[loc] == null)
                 {
-                    _children[loc] = new TrieWithNoChildren();
+                    ITrie[] temp = new ITrie[1];
+                    _children[loc] = temp;
                 }
                 _children[loc] = _children[loc].Add(s.Substring(1));
+                return this;
             }
             //returns resulting trie
-            return this;
+           
         }
 
         ITrie ITrie.Add(string s)

@@ -1,12 +1,12 @@
 ﻿/* TrieTests.cs
  * Author: Rod Howell
  */
+using NUnit.Framework;
+using System;
+using System.Text;
 
 namespace Ksu.Cis300.TrieLibrary.Tests
 {
-    using NUnit.Framework;
-    using System;
-
     /// <summary>
     /// Unit tests for the Trie class.
     /// </summary>
@@ -16,65 +16,66 @@ namespace Ksu.Cis300.TrieLibrary.Tests
         /// <summary>
         /// Tests looking up an empty string in an empty trie.
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test]
         public void TestAEmptyContainsEmptyString()
         {
-            Trie t = new Trie();
+            ITrie t = new TrieWithNoChildren();
             Assert.That(t.Contains(""), Is.False);
         }
 
         /// <summary>
         /// Tests looking up a nonempty string in an empty trie.
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test]
         public void TestAEmptyContainsNonemptyString()
         {
-            Trie t = new Trie();
+            ITrie t = new TrieWithNoChildren();
             Assert.That(t.Contains("word"), Is.False);
         }
 
         /// <summary>
-        /// Tests looking up a string with an invalid character.
+        /// Tests looking up a string with an invalid character in an empty trie.
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test]
         public void TestAEmptyContainsInvalidString()
         {
-            Trie t = new Trie();
+            ITrie t = new TrieWithNoChildren();
             Assert.That(t.Contains("`"), Is.False);
         }
 
         /// <summary>
-        /// Tests lookup a longer string with an invalid character.
+        /// Tests that adding the empty string to an empty trie gives a TrieWithNoChildren.
         /// </summary>
-        [Test, Timeout(1000)]
-        public void TestAEmptyContainsLongerInvalidString()
+        [Test]
+        public void TestBAddEmptyCheckType()
         {
-            Trie t = new Trie();
-            Assert.That(t.Contains("ab{d"), Is.False);
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("");
+            Assert.That(t, Is.TypeOf(typeof(TrieWithNoChildren)));
         }
 
         /// <summary>
         /// Adds the empty string to an empty trie and looks it up.
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test]
         public void TestBAddEmptyLookItUp()
         {
-            Trie t = new Trie();
-            t.Add("");
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("");
             Assert.That(t.Contains(""), Is.True);
         }
 
         /// <summary>
-        /// Tests adding a string with an invalid character.
+        /// Tests adding a string with an invalid character to an empty trie.
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test]
         public void TestBAddInvalid()
         {
             Exception e = null;
-            Trie t = new Trie();
+            ITrie t = new TrieWithNoChildren();
             try
             {
-                t.Add("`");
+                t = t.Add("`");
             }
             catch (Exception ex)
             {
@@ -84,131 +85,169 @@ namespace Ksu.Cis300.TrieLibrary.Tests
         }
 
         /// <summary>
-        /// Tests adding another invalid string.
+        /// Tests adding another invalid string to an empty trie.
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test]
         public void TestBAddInvalid2()
         {
             Exception e = null;
-            Trie t = new Trie();
+            ITrie t = new TrieWithNoChildren();
             try
             {
-                t.Add("{");
+                t = t.Add("{");
             }
             catch (Exception ex)
             {
                 e = ex;
             }
             Assert.That(e, Is.Not.Null.And.TypeOf(typeof(ArgumentException)));
+        }
+
+        /// <summary>
+        /// Tests that adding a 1-letter word to an empty trie gives a TrieWithOneChild.
+        /// </summary>
+        [Test]
+        public void TestCAddShortWordCheckType()
+        {
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("i");
         }
 
         /// <summary>
         /// Adds a 1-letter word and looks it up.
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test]
         public void TestCAddShortWordLookItUp()
         {
-            Trie t = new Trie();
-            t.Add("i");
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("i");
             Assert.That(t.Contains("i"), Is.True);
+        }
+
+        /// <summary>
+        /// Adds a 1-letter word to an empty trie and looks up the empty string.
+        /// </summary>
+        [Test]
+        public void TestCAddShortWordLookUpEmpty()
+        {
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("i");
+            Assert.That(t.Contains(""), Is.False);
+        }
+
+        /// <summary>
+        /// Adds the empty string and a 1-letter word to an empty trie and looks up the empty string.
+        /// </summary>
+        [Test]
+        public void TestCAddEmptyAndShortWordLookUpEmpty()
+        {
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("");
+            t = t.Add("i");
+            Assert.That(t.Contains(""), Is.True);
         }
 
         /// <summary>
         /// Adds a longer word and looks it up.
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test]
         public void TestDAddLongWordLookItUp()
         {
-            Trie t = new Trie();
-            t.Add("word");
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("word");
             Assert.That(t.Contains("word"), Is.True);
         }
 
         /// <summary>
         /// Adds a word and looks up a prefix that should not be in the trie.
         /// </summary>
-        [Test, Timeout(1000)]
+        [Test]
         public void TestDAddWordLookUpPrefix()
         {
-            Trie t = new Trie();
-            t.Add("word");
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("word");
             Assert.That(t.Contains("wo"), Is.False);
         }
 
         /// <summary>
-        /// Strings to add to the trie for the following tests.
+        /// Adds a word, then a prefix, and looks up all prefixes.
         /// </summary>
-        private string[] _words = new string[]
+        [Test]
+        public void TestELookupAllPrefixes()
         {
-            "cab",
-            "dog",
-            "cart",
-            "car",
-            "cable"
-        };
-
-        /// <summary>
-        /// Builds a trie containing the strings in _words.
-        /// </summary>
-        /// <returns>The resulting trie.</returns>
-        private Trie LoadTrie()
-        {
-            Trie t = new Trie();
-            foreach (string s in _words)
-            {
-                t.Add(s);
-            }
-            return t;
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("ice");
+            t = t.Add("i");
+            StringBuilder sb = new StringBuilder();
+            sb.Append(t.Contains(""));
+            sb.Append(t.Contains("i"));
+            sb.Append(t.Contains("ic"));
+            sb.Append(t.Contains("ice"));
+            Assert.That(sb.ToString(), Is.EqualTo("FalseTrueFalseTrue"));
         }
 
         /// <summary>
-        /// Loads a trie with five words and looks one up.
+        /// Adds a word, then a continuation of that word, and looks up all prefixes.
         /// </summary>
-        [Test, Timeout(1000)]
-        public void TestELookupInLarger()
+        [Test]
+        public void TestELookupAllPrefixes2()
         {
-            Trie t = LoadTrie();
-            Assert.That(t.Contains("dog"), Is.True);
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("i");
+            t = t.Add("ice");
+            StringBuilder sb = new StringBuilder();
+            sb.Append(t.Contains(""));
+            sb.Append(t.Contains("i"));
+            sb.Append(t.Contains("ic"));
+            sb.Append(t.Contains("ice"));
+            Assert.That(sb.ToString(), Is.EqualTo("FalseTrueFalseTrue"));
         }
 
         /// <summary>
-        /// Looks up a prefix that was added after the longer word.
+        /// Adds a word starting with a different letter to a TrieWithOneChild and
+        /// checks its type.
         /// </summary>
-        [Test, Timeout(1000)]
-        public void TestELookupPrefixAddedAfter()
+        [Test]
+        public void TestFAddDifferentLetterCheckType()
         {
-            Trie t = LoadTrie();
-            Assert.That(t.Contains("car"), Is.True);
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("i");
+            t = t.Add("ice");
+            t = t.Add("cream");
+            Assert.That(t, Is.TypeOf(typeof(TrieWithManyChildren)));
         }
 
         /// <summary>
-        /// Looks up a prefix that was added before the longer word.
+        /// Adds several words and looks them up, along with the empty string.
         /// </summary>
-        [Test, Timeout(1000)]
-        public void TestELookupPrefixAddedBefore()
+        [Test]
+        public void TestFAddDifferentLetterLookUpAll()
         {
-            Trie t = LoadTrie();
-            Assert.That(t.Contains("cab"), Is.True);
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("i");
+            t = t.Add("ice");
+            t = t.Add("cream");
+            StringBuilder sb = new StringBuilder();
+            sb.Append(t.Contains(""));
+            sb.Append(t.Contains("i"));
+            sb.Append(t.Contains("ice"));
+            sb.Append(t.Contains("cream"));
+            Assert.That(sb.ToString, Is.EqualTo("FalseTrueTrueTrue"));
         }
 
         /// <summary>
-        /// Looks up a word that has a prefix added earlier.
+        /// Adds the empty string to an empty trie, then several words to form a
+        /// TrieWithManyChildren, and looks up the empty string.
         /// </summary>
-        [Test, Timeout(1000)]
-        public void TestELookupWordWithPrefixAddedBefore()
+        [Test]
+        public void TestFAddEmptyAndDifferentLetterLookUpEmpty()
         {
-            Trie t = LoadTrie();
-            Assert.That(t.Contains("cable"), Is.True);
-        }
-
-        /// <summary>
-        /// Looks up a word that has a prefix added later.
-        /// </summary>
-        [Test, Timeout(1000)]
-        public void TestELookupWordWithPrefixAddedAfter()
-        {
-            Trie t = LoadTrie();
-            Assert.That(t.Contains("cart"));
+            ITrie t = new TrieWithNoChildren();
+            t = t.Add("");
+            t = t.Add("i");
+            t = t.Add("ice");
+            t = t.Add("cream");
+            Assert.That(t.Contains(""), Is.EqualTo(true));
         }
     }
 }
